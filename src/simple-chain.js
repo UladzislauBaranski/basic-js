@@ -1,31 +1,49 @@
+  
 const CustomError = require("../extensions/custom-error");
 
 const chainMaker = {
-  arr: [],
+  "link": [],
+
   getLength() {
-    return(this.arr.length);
+    const chainLength = chainMaker.link.filter(function(x) {
+      return x !== undefined;
+    });
+    return chainLength.length;
   },
   addLink(value) {
-    value = '( ' + value + ' )';
-    this.arr.push(value)
-    return this;
+    chainMaker.link.push(value);
+    return chainMaker;
   },
   removeLink(position) {
-    if (typeof position != "number" || position < 1 || position > this.arr.length - 1){
-      this.arr = [];
-      throw Error;
+    const clearChain = chainMaker.link.filter(function(x) {
+      return x !== undefined;
+    });
+    chainMaker.link = clearChain;
+
+    if(!Number.isInteger(position) ||
+      position <= 0 ||
+      position > chainMaker.link.length) {
+        chainMaker.link = [];
+        throw new Error();
     }
-    this.arr.splice(position-1, 1);
-    return this;
+    chainMaker.link[position - 1] = undefined;
+    return chainMaker;
   },
   reverseChain() {
-    this.arr = this.arr.reverse();
-    return this;
+    chainMaker.link = chainMaker.link.reverse();
+    return chainMaker;
   },
   finishChain() {
-    let a = [...this.arr];
-    this.arr = [];
-    return a.join("~~");
+    const clearChain = chainMaker.link.filter(function(x) {
+      return x !== undefined;
+    });
+
+    let result = "";
+    clearChain.forEach(function (element) {
+      result += "( " + element + " )~~";
+    });
+    chainMaker.link = [];
+    return result.slice(0,-2);
   }
 };
 

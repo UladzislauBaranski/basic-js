@@ -1,4 +1,4 @@
-require('./test/count-cats.test');
+npmrequire('./test/count-cats.test');
 require('./test/carbon-dating.test');
 require('./test/dream-team.test');
 require('./test/extended-repeater.test');

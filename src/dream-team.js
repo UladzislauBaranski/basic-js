@@ -1,15 +1,15 @@
 const CustomError = require("../extensions/custom-error");
 
 module.exports = function createDreamTeam(members) {
-  if (typeof(members) != 'object' || members == null) {
+  if(Array.isArray(members) === false) {
     return false;
   }
-
-  let str = '';
-  for (let i = 0; i < members.length; i++) {
-    if (typeof(members[i]) == 'string'){
-      str += members[i].trim().toUpperCase()[0];
+  let result = [];
+  members.forEach(function (element) {
+    if(typeof element === "string") {
+      const letter = element.trim().charAt(0).toUpperCase();
+      result.push(letter);
     }
-  }
-  return str.split('').sort().join('');
+  });
+   return result.sort().join('');
 };

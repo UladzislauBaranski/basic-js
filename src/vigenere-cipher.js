@@ -1,48 +1,53 @@
 const CustomError = require("../extensions/custom-error");
 
 class VigenereCipheringMachine {
-  constructor(reverse) {
-    this.reverse = reverse
-}
-encrypt(message, key) {
-    key = key.toLowerCase();
-    let msg = message.replace(/[#@\/|*! :()^?%=+-<>,.1234567890]/g, '').toLowerCase();
-    let code_message = msg.split('').map(el => el.charCodeAt(0) - 97);
-    let code_key = msg.split('').map((el, i) => i < key.length
-        ? el = key[i].charCodeAt(0) - 97
-        : el = key[i % key.length].charCodeAt(0) - 97);
-    let encription = code_message.map((el, i) => el + code_key[i] < 26
-        ? el = String.fromCharCode(el + code_key[i] + 97)
-        : el = String.fromCharCode(((el + code_key[i]) % 26) + 97)).join('');
-    for (let i = 0; i < message.length; i++) {
-        if ('#@\\/|*! :()^?%=+-<>,.1234567890'.includes(message[i])) {
-            encription = encription.slice(0, i) + message[i] + encription.slice(i,)
-        }
+  constructor(type) {
+    this.type = type;
+  }
+  encrypt(message, key) {
+    message = message.toUpperCase();
+    let keycode = key.toUpperCase();
+
+    const messageLength = message.length;
+    keycode = keycode.repeat(Math.ceil(messageLength / key.length)).split('');
+
+    let code = "";
+    for(let i = 0; i < messageLength; i += 1) {
+      if(65 <= message.charCodeAt(i) &&  message.charCodeAt(i) < 91) {
+        code += String.fromCharCode(((message.charCodeAt(i) + keycode[0].charCodeAt(0)) % 26) + 65);
+        keycode.shift();
+      } else {
+        code += message.charAt(i);
+      }
     }
-    encription = encription.toUpperCase();
 
-    return this.reverse ?  encription.split('').reverse().join('') : encription;
-}
-
-decrypt(message, key) {
-    key = key.toLowerCase();
-    let msg = message.replace(/[#@\/|*! :()^?%=+-<>,.1234567890]/g, '');
-    let code_message = msg.toLowerCase().split('').map(el => el.charCodeAt(0) - 97);
-    let code_key = msg.split('').map((el, i) => i < key.length
-        ? el = key[i].charCodeAt(0) - 97
-        : el = key[i % key.length].charCodeAt(0) - 97);
-    let decryption = code_message.map((el, i) => el >= code_key[i]
-        ? String.fromCharCode((el - code_key[i]) + 97)
-        : String.fromCharCode((el + 26 - code_key[i]) + 97)).join('');
-    for (let i = 0; i < message.length; i++) {
-        if ('#@\\/|*! :()^?%=+-<>,.1234567890'.includes(message[i])) {
-            decryption = decryption.slice(0, i) + message[i] + decryption.slice(i,)
-        }
+    if(this.type === false) {
+      return code.split('').reverse().join('');
     }
-    decryption = decryption.toUpperCase();
+    return code;
+  }    
+  decrypt(message, key) {
+    message = message.toUpperCase();
+    let keycode = key.toUpperCase();
 
-    return this.reverse ? decryption.split('').reverse().join('') : decryption;
-}
+    const messageLength = message.length;
+    keycode = keycode.repeat(Math.ceil(messageLength / key.length)).split('');
+
+    let code = "";
+    for(let i = 0; i < messageLength; i += 1) {
+      if(65 <= message.charCodeAt(i) &&  message.charCodeAt(i) < 91) {
+        code += String.fromCharCode(((message.charCodeAt(i) + 26 - keycode[0].charCodeAt(0)) % 26) + 65);
+        keycode.shift();
+      } else {
+        code += message.charAt(i);
+      }
+    }
+
+    if(this.type === false) {
+      return code.split('').reverse().join('');
+    }
+    return code;
+  }
 }
 
 module.exports = VigenereCipheringMachine;

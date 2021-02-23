@@ -1,13 +1,12 @@
 const CustomError = require("../extensions/custom-error");
 
 module.exports = function countCats(matrix) {
-  count = 0;
-  for (let elem of matrix) {
-      for (let el of elem) {
-          if (el === '^^') {
-              count++;
-          }
-      }
+  let catArray = [];
+  for(let i = 0; i < matrix.length; i += 1) {
+    const res = matrix[i].filter(function(elem) {
+      return elem === "^^";
+    });
+    catArray = catArray.concat(res);
   }
-  return count;
+  return catArray.length;
 };
